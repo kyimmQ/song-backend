@@ -9,22 +9,36 @@ import {
   ParseIntPipe,
   HttpStatus,
   Body,
+  Scope,
 } from "@nestjs/common";
 import { SongsService } from "./songs.service";
 import { CreateSongDTO } from "./dto/create-song-dto";
+import { Song } from "./song.entity";
+import { Response } from "express";
 
-@Controller("songs")
+@Controller({ path: "songs", scope: Scope.REQUEST })
 export class SongsController {
   constructor(private songsService: SongsService) {}
 
   @Post()
-  create(@Body() createSongDTO: CreateSongDTO) {
+  create(@Body() createSongDTO: CreateSongDTO): Promise<Song> {
     return this.songsService.create(createSongDTO);
   }
   @Get()
-  findAll(@Res() res) {
+  async findAll(
+    @Res() res: Response
+  ): Promise<
+    Response<
+      { msg: string; data: Song[] },
+      Record<string, { msg: string; data: Song[] }>
+    >
+  > {
     try {
-      return this.songsService.findAll();
+      const allSongs = await this.songsService.findAll();
+      return res.status(200).json({
+        msg: "SUCCESS",
+        data: allSongs,
+      });
     } catch (error) {
       return res.status(500).json({
         msg: "FAILED",
