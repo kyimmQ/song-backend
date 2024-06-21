@@ -16,7 +16,6 @@ import {
 import { SongsService } from "./songs.service";
 import { CreateSongDTO } from "./dto/create-song-dto";
 import { Song } from "./song.entity";
-import { Response } from "express";
 import { UpdateSongDTO } from "./dto/update-song.dto";
 
 @Controller({ path: "songs", scope: Scope.REQUEST })
