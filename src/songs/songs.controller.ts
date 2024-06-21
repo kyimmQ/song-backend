@@ -10,11 +10,14 @@ import {
   HttpStatus,
   Body,
   Scope,
+  Query,
+  DefaultValuePipe,
 } from "@nestjs/common";
 import { SongsService } from "./songs.service";
 import { CreateSongDTO } from "./dto/create-song-dto";
 import { Song } from "./song.entity";
 import { Response } from "express";
+import { UpdateSongDTO } from "./dto/update-song.dto";
 
 @Controller({ path: "songs", scope: Scope.REQUEST })
 export class SongsController {
@@ -26,45 +29,35 @@ export class SongsController {
   }
   @Get()
   async findAll(
-    @Res() res: Response
-  ): Promise<
-    Response<
-      { msg: string; data: Song[] },
-      Record<string, { msg: string; data: Song[] }>
-    >
-  > {
-    try {
-      const allSongs = await this.songsService.findAll();
-      return res.status(200).json({
-        msg: "SUCCESS",
-        data: allSongs,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        msg: "FAILED",
-        error: error.name,
-        data: [],
-      });
-    }
+    @Query("page", new DefaultValuePipe(1), ParseIntPipe)
+    page: number = 1,
+    @Query("limit", new DefaultValuePipe(10), ParseIntPipe)
+    limit: number = 10
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    return this.songsService.paginate({ page, limit });
   }
   @Get(":id")
   findOne(
-    @Param(
-      "id",
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })
-    )
+    @Param("id", ParseIntPipe)
     id: number
-  ) {
-    return `fetch song on the based on id ${typeof id}`;
+  ): Promise<Song> {
+    return this.songsService.findOne(id);
   }
 
   @Put(":id")
-  update() {
-    return "update song on the based on id";
+  update(
+    @Param("id", ParseIntPipe) id: number,
+    @Body() updateSongDTO: UpdateSongDTO
+  ) {
+    return this.songsService.update(id, updateSongDTO);
   }
 
   @Delete(":id")
-  delete() {
-    return "delete song on the based on id";
+  delete(
+    @Param("id", ParseIntPipe)
+    id: number
+  ) {
+    return this.songsService.remove(id);
   }
 }
