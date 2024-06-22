@@ -1,9 +1,11 @@
 import { Artist } from "src/artists/artist.entity";
+import { Playlist } from "src/playlists/playlist.entity";
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -30,4 +32,7 @@ export class Song {
 
   @Column("text")
   lyrics: string;
+
+  @ManyToOne(() => Playlist, (playlist) => playlist.songs)
+  playList: Playlist;
 }
