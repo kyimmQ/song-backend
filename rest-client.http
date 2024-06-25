@@ -47,3 +47,6 @@ Content-Type: application/json
     "email": "john@email.com",
     "password": "123456"
 }
+### User profile
+GET http://localhost:3000/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZW1haWwuY29tIiwic3ViIjo0LCJpYXQiOjE3MTkzMTczNjIsImV4cCI6MTcxOTQwMzc2Mn0.1fjQCzXb_oLprQNAxRphVX2L1BZmDpOYYmcOzwkHkJc

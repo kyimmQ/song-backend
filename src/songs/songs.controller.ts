@@ -12,18 +12,23 @@ import {
   Scope,
   Query,
   DefaultValuePipe,
+  UseGuards,
+  Req,
 } from "@nestjs/common";
 import { SongsService } from "./songs.service";
 import { CreateSongDTO } from "./dto/create-song-dto";
 import { Song } from "./song.entity";
 import { UpdateSongDTO } from "./dto/update-song.dto";
+import { JwtArtistGuard } from "src/auth/jwt-artist.guard";
 
 @Controller({ path: "songs", scope: Scope.REQUEST })
 export class SongsController {
   constructor(private songsService: SongsService) {}
 
   @Post()
-  create(@Body() createSongDTO: CreateSongDTO): Promise<Song> {
+  @UseGuards(JwtArtistGuard) // 1
+  create(@Body() createSongDTO: CreateSongDTO, @Req() req): Promise<Song> {
+    console.log(req.user);
     return this.songsService.create(createSongDTO);
   }
   @Get()
